@@ -1,0 +1,72 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post app</title>
+</head>
+<body>
+    <h1>Welcome to the post app</h1>
+    <h2>Create post</h2>
+    <form id="create-post">
+        <input type="text" name="userId" placeholder="User id" required />
+        <input type="text" name="title" placeholder="title" required minlength="1" maxlength="50" />
+        <input type="text" name="body" placeholder="description" required minlength="1" maxlength="255" />
+        <button type="submit">Create post</button>
+    </form>
+    <h2>Get post by id</h2>
+    <form id="get-post">
+        <input type="text" name="postId" placeholder="Post id" required min="0" />
+        <button type="submit">Get post</button>
+    </form>
+</body>
+<script>
+    const getPostForm = document.getElementById('get-post')
+    const createPostForm = document.getElementById('create-post')
+
+    createPostForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault()
+        const formData  = new FormData(createPostForm)
+        const userId = parseInt(formData.get('userId'))
+        const title = formData.get('title')
+        const body = formData.get('body')
+
+        if(isNaN(userId) || !title || !body) return
+
+        const reqBody = { userId, title, body }
+
+        const fetchOpt = { 
+            body: JSON.stringify(reqBody),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        const res = await fetch(`http://localhost:3000/posts`, fetchOpt)
+        const { data } = await res.json()
+
+        if(!data) console.log('Could not create post')
+        else console.log('Post created ID: ', data.id)
+    })
+
+    getPostForm.addEventListener('submit', async (ev) => {
+        ev.preventDefault()
+        
+        const value  = new FormData(getPostForm).get('postId')
+        if (isNaN(parseInt(value))) return;
+
+        const fetchOpt = { 
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        const res = await fetch(`http://localhost:3000/posts/${value}`, fetchOpt)
+        const { data } = await res.json()
+
+        if(!data) console.log(`Post with id ${value} not found`);
+        else console.log('Post found', data)
+})
+</script>
+</html>
