@@ -43,7 +43,7 @@
             }
         }
 
-        const res = await fetch(`http://localhost:3000/posts`, fetchOpt)
+        const res = await fetch(`/posts`, fetchOpt)
         const { data } = await res.json()
 
         if(!data) console.log('Could not create post')
@@ -62,7 +62,7 @@
                 'Content-Type': 'application/json'
             }
         }
-        const res = await fetch(`http://localhost:3000/posts/${value}`, fetchOpt)
+        const res = await fetch(`/posts/${value}`, fetchOpt)
         const { data } = await res.json()
 
         if(!data) console.log(`Post with id ${value} not found`);
